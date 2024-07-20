@@ -20,6 +20,6 @@ repos:
         types: [python]
       - id: jest
         name: jest
-        entry: npm run test
+        entry: npm run test -- --passWithNoTests
         language: system
         types: [javascript]
