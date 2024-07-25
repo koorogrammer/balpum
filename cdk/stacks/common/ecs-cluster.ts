@@ -7,7 +7,7 @@ interface VpcStackProps extends cdk.StackProps {
     vpc: ec2.Vpc;
 }
 
-export class BalpumEcsClusterStack extends cdk.Stack {
+export class EcsClusterStack extends cdk.Stack {
     public readonly cluster: ecs.Cluster;
 
     constructor(scope: Construct, id: string, props: VpcStackProps) {
