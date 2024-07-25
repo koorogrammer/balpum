@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import { VpcStack } from '../../stacks/network/vpc';
+import { VpcStack } from '../../stacks/common/vpc';
 
 describe('Vpc Test', () => {
   let template: Template;
