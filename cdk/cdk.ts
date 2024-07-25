@@ -2,8 +2,16 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 
-import { VpcStack } from './stacks/network/vpc';
+import { VpcStack } from './stacks/common/vpc';
+import { EcsClusterStack } from './stacks/common/ecs-cluster';
+
+import { EcsApiStack } from './stacks/api/api-ecs';
 
 const app = new cdk.App();
 
-new VpcStack(app, 'VpcStack');
+// 공통 스택
+const vpcStack = new VpcStack(app, 'VpcStack');
+const ecsClusterStack = new EcsClusterStack(app, 'BalpumEcsClusterStack', { vpc: vpcStack.vpc });
+
+// API 서비스 스택
+new EcsApiStack(app, 'BalpumApiEcsStack', { vpc: vpcStack.vpc, cluster: ecsClusterStack.cluster });
