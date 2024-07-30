@@ -1,7 +1,7 @@
 # 출처: https://github.com/edwardinubuntu/flutter-web-dockerfile/blob/master/Dockerfile
 
 # Environemnt to install flutter and build web
-FROM debian:latest AS build-env
+FROM --platform=linux/amd64 debian:latest AS build-env
 
 # install all needed stuff
 RUN apt-get update
@@ -39,7 +39,7 @@ RUN flutter build web
 # once heare the app will be compiled and ready to deploy
 
 # use nginx to deploy
-FROM nginx:latest
+FROM --platform=linux/amd64 nginx:latest
 
 # copy the info of the builded web app to nginx
 COPY --from=build-env /app/build/web /usr/share/nginx/html
