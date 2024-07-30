@@ -42,3 +42,10 @@ $ npm run test
 $ black .
 $ pytest .
 ```
+
+## 로컬 실행
+```
+$ uvicorn main:app --host 0.0.0.0 --port 80
+$ flutter run
+```
+- flutter setup은 [여기](https://docs.flutter.dev/get-started/install)를 참고
