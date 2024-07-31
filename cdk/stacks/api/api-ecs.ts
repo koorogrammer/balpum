@@ -5,6 +5,7 @@ import { DockerImageAsset } from 'aws-cdk-lib/aws-ecr-assets';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import { ApplicationLoadBalancer, ApplicationTargetGroup, ApplicationProtocol } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as path from 'path';
+import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 
 interface VpcStackProps extends cdk.StackProps {
     vpc: ec2.Vpc;
@@ -20,6 +21,19 @@ export class EcsApiStack extends cdk.Stack {
         const image = new DockerImageAsset(this, 'BalpumApiImage', {
             directory: path.resolve(currentDir, '../../../api'),
         });
+
+        // 보안 그룹 설정
+        const lbsecurityGroup = new ec2.SecurityGroup(this, 'BalpumApiSecurityGroup', {
+            vpc: props.vpc,
+            allowAllOutbound: true,
+        });
+        lbsecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(80));
+
+        const ecsSecurityGroup = new ec2.SecurityGroup(this, 'BalpumApiEcsSecurityGroup', {
+            vpc: props.vpc,
+            allowAllOutbound: true,
+        });
+        ecsSecurityGroup.addIngressRule(lbsecurityGroup, ec2.Port.tcp(80));
 
         // ECS Task Definition
         const taskDefinition = new ecs.FargateTaskDefinition(this, 'BalpumApiTaskDef', {
@@ -47,12 +61,14 @@ export class EcsApiStack extends cdk.Stack {
             vpcSubnets: {
                 subnets: props.vpc.privateSubnets,
             },
+            securityGroups: [ecsSecurityGroup],
         });
 
         // ALB 생성
         const lb = new ApplicationLoadBalancer(this, 'BalpumApiLB', {
             vpc: props.vpc,
             internetFacing: true,
+            securityGroup: lbsecurityGroup,
         });
         const targetGroup = new ApplicationTargetGroup(this, 'BalpumApiTargetGroup', {
             vpc: props.vpc,
@@ -78,6 +94,14 @@ export class EcsApiStack extends cdk.Stack {
             requestsPerTarget: 1000,
             targetGroup: targetGroup,
             scaleOutCooldown: cdk.Duration.seconds(60),
+        });
+
+        // secret manager에 DNS name 저장
+        const secret = new secretsmanager.Secret(this, 'BalpumApiDnsNameSecret', {
+            secretName: 'BalpumApiDnsNameSecret',
+            secretObjectValue: {
+                apiDnsName: cdk.SecretValue.unsafePlainText(lb.loadBalancerDnsName),
+            }
         });
     }
 }
