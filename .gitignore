@@ -14,7 +14,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -169,3 +168,128 @@ node_modules
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
+# flutter
+# Flutter/Dart 관련
+
+# 빌드 결과물
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pubspec.lock
+
+# Dart 패키지 및 플러그인
+.dart_tool/
+.packages
+.pub-cache/
+
+# Visual Studio Code 관련
+.vscode/
+
+# IntelliJ/Android Studio 관련
+.idea/
+*.iml
+*.ipr
+*.iws
+.gradle/
+local.properties
+
+# MacOS 관련
+.DS_Store
+
+# Android 관련
+/local.properties
+/.gradle/
+/.idea/
+/local.properties
+/.gradle/
+/build/
+/captures/
+/*.keystore
+!gradle/wrapper/gradle-wrapper.jar
+*.iml
+/.externalNativeBuild
+
+# iOS 관련
+/ios/Flutter/Flutter.podspec
+/ios/Pods
+/ios/.symlinks
+/ios/Flutter/App.framework
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+/ios/ServiceDefinitions.json
+/ios/Runner.xcworkspace
+xcuserdata
+*.xcscmblueprint
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcworkspace/contents.xcworkspacedata
+*.xcuserdata
+
+# 기타 환경 관련
+*.swp
+*.lock
+*.lock.json
+*.log
+*.sql
+*.env
+
+# 개인 설정 파일
+*.user
+*.userosscache
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# 커버리지 결과물
+coverage/
+
+# 테스트 결과물
+/test-outputs/
+
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release

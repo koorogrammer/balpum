@@ -26,6 +26,11 @@ $ pipenv install # 의존성 설치
 $ pipenv shell # 가상환경 실행
 ```
 
+## Flutter
+```
+$ flutter pub get # 의존성 설치
+```
+
 ## pre-commit
 - 자동화된 코드 품질 보장을 위해 pre-commit 적용
 ```

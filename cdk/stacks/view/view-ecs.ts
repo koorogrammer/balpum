@@ -5,46 +5,32 @@ import { DockerImageAsset } from 'aws-cdk-lib/aws-ecr-assets';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import { ApplicationLoadBalancer, ApplicationTargetGroup, ApplicationProtocol } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as path from 'path';
-import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 
 interface VpcStackProps extends cdk.StackProps {
     vpc: ec2.Vpc;
     cluster: ecs.Cluster;
 }
 
-export class EcsApiStack extends cdk.Stack {
+export class EcsViewStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: VpcStackProps) {
         super(scope, id, props);
 
         // Docker Image 등록
         const currentDir = __dirname;
-        const image = new DockerImageAsset(this, 'BalpumApiImage', {
-            directory: path.resolve(currentDir, '../../../api'),
+        const image = new DockerImageAsset(this, 'BalpumViewImage', {
+            directory: path.resolve(currentDir, '../../../view'),
         });
-
-        // 보안 그룹 설정
-        const lbsecurityGroup = new ec2.SecurityGroup(this, 'BalpumApiSecurityGroup', {
-            vpc: props.vpc,
-            allowAllOutbound: true,
-        });
-        lbsecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(80));
-
-        const ecsSecurityGroup = new ec2.SecurityGroup(this, 'BalpumApiEcsSecurityGroup', {
-            vpc: props.vpc,
-            allowAllOutbound: true,
-        });
-        ecsSecurityGroup.addIngressRule(lbsecurityGroup, ec2.Port.tcp(80));
 
         // ECS Task Definition
-        const taskDefinition = new ecs.FargateTaskDefinition(this, 'BalpumApiTaskDef', {
-            memoryLimitMiB: 2048,
-            cpu: 1024,
+        const taskDefinition = new ecs.FargateTaskDefinition(this, 'BalpumViewTaskDef', {
+            memoryLimitMiB: 8192, 
+            cpu: 4096,
         });
         const containerImage = ecs.ContainerImage.fromDockerImageAsset(image);
-        const container = taskDefinition.addContainer('BalpumApiContainer', {
+        const container = taskDefinition.addContainer('BalpumViewContainer', {
             image: containerImage,
             logging: new ecs.AwsLogDriver({
-                streamPrefix: 'BalpumApiContainer',
+                streamPrefix: 'BalpumViewContainer',
             }),
         });
         container.addPortMappings({
@@ -52,25 +38,29 @@ export class EcsApiStack extends cdk.Stack {
             protocol: ecs.Protocol.TCP,
         });
 
+        // Security Group 설정
+        const securityGroup = new ec2.SecurityGroup(this, 'BalpumViewSecurityGroup', {
+            vpc: props.vpc,
+            allowAllOutbound: true,
+        });
+
         // ECS Service 생성
-        const service = new ecs.FargateService(this, 'BalpumApiService', {
+        const service = new ecs.FargateService(this, 'BalpumViewService', {
             cluster: props.cluster,
             taskDefinition: taskDefinition,
             desiredCount: 1,
-            assignPublicIp: false,
+            assignPublicIp: true,
             vpcSubnets: {
-                subnets: props.vpc.privateSubnets,
+                subnets: props.vpc.publicSubnets,
             },
-            securityGroups: [ecsSecurityGroup],
         });
 
         // ALB 생성
-        const lb = new ApplicationLoadBalancer(this, 'BalpumApiLB', {
+        const lb = new ApplicationLoadBalancer(this, 'BalpumViewLB', {
             vpc: props.vpc,
             internetFacing: true,
-            securityGroup: lbsecurityGroup,
         });
-        const targetGroup = new ApplicationTargetGroup(this, 'BalpumApiTargetGroup', {
+        const targetGroup = new ApplicationTargetGroup(this, 'BalpumViewTargetGroup', {
             vpc: props.vpc,
             port: 80,
             protocol: ApplicationProtocol.HTTP,
@@ -79,7 +69,7 @@ export class EcsApiStack extends cdk.Stack {
                 path: "/",
             }
         });
-        lb.addListener('BalpumApiListener', {
+        lb.addListener('BalpumViewListener', {
             port: 80,
             open: true,
             defaultTargetGroups: [targetGroup]
@@ -90,18 +80,10 @@ export class EcsApiStack extends cdk.Stack {
             minCapacity: 0,
             maxCapacity: 2,
         });
-        scalableTarget.scaleOnRequestCount('BalpumApiRequestScaling', {
+        scalableTarget.scaleOnRequestCount('BalpumViewRequestScaling', {
             requestsPerTarget: 1000,
             targetGroup: targetGroup,
             scaleOutCooldown: cdk.Duration.seconds(60),
-        });
-
-        // secret manager에 DNS name 저장
-        const secret = new secretsmanager.Secret(this, 'BalpumApiDnsNameSecret', {
-            secretName: 'BalpumApiDnsNameSecret',
-            secretObjectValue: {
-                apiDnsName: cdk.SecretValue.unsafePlainText(lb.loadBalancerDnsName),
-            }
         });
     }
 }
