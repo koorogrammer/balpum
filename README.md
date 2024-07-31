@@ -26,6 +26,11 @@ $ pipenv install # 의존성 설치
 $ pipenv shell # 가상환경 실행
 ```
 
+## Flutter
+```
+$ flutter pub get # 의존성 설치
+```
+
 ## pre-commit
 - 자동화된 코드 품질 보장을 위해 pre-commit 적용
 ```
@@ -39,3 +44,10 @@ $ npm run test
 $ black .
 $ pytest .
 ```
+
+## 로컬 실행
+```
+$ cd api && uvicorn main:app --host 0.0.0.0 --port 80
+$ cd view && flutter run
+```
+- flutter setup은 [여기](https://docs.flutter.dev/get-started/install)를 참고
