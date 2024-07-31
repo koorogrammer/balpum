@@ -23,3 +23,8 @@ repos:
         entry: npm run test -- --passWithNoTests
         language: system
         types: [javascript]
+      - id: dart-fix
+        name: dart-fix
+        entry: cd view && dart fix --apply && cd ..
+        language: system
+        types: [dart]
