@@ -1,8 +1,5 @@
-# 발품 프로젝트
-
-<p align="center">
-  <img src="./doc/img/logo.jpeg"/>
-</p>
+# project-base
+- 프로젝트 셋업 템플릿을 만듭니다.
 
 # 개발 환경
 
@@ -42,10 +39,3 @@ $ npm run test
 $ black .
 $ pytest .
 ```
-
-## 로컬 실행
-```
-$ cd api && uvicorn main:app --host 0.0.0.0 --port 80
-$ cd view && flutter run
-```
-- flutter setup은 [여기](https://docs.flutter.dev/get-started/install)를 참고
