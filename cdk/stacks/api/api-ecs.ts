@@ -77,6 +77,7 @@ export class EcsApiStack extends cdk.Stack {
             targets: [service],
             healthCheck: {
                 path: "/",
+                interval: cdk.Duration.seconds(30),
             }
         });
         lb.addListener('BalpumApiListener', {
