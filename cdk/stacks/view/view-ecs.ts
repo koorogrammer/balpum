@@ -67,6 +67,7 @@ export class EcsViewStack extends cdk.Stack {
             targets: [service],
             healthCheck: {
                 path: "/",
+                interval: cdk.Duration.seconds(30),
             }
         });
         lb.addListener('BalpumViewListener', {
@@ -77,7 +78,7 @@ export class EcsViewStack extends cdk.Stack {
 
         // Serverless를 위한 Auto Scaling 
         const scalableTarget = service.autoScaleTaskCount({
-            minCapacity: 0,
+            minCapacity: 1,
             maxCapacity: 2,
         });
         scalableTarget.scaleOnRequestCount('BalpumViewRequestScaling', {
