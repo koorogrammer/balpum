@@ -88,7 +88,7 @@ export class EcsApiStack extends cdk.Stack {
 
         // Serverless를 위한 Auto Scaling 
         const scalableTarget = service.autoScaleTaskCount({
-            minCapacity: 0,
+            minCapacity: 1,
             maxCapacity: 2,
         });
         scalableTarget.scaleOnRequestCount('BalpumApiRequestScaling', {
@@ -97,12 +97,9 @@ export class EcsApiStack extends cdk.Stack {
             scaleOutCooldown: cdk.Duration.seconds(60),
         });
 
-        // secret manager에 DNS name 저장
-        const secret = new secretsmanager.Secret(this, 'BalpumApiDnsNameSecret', {
-            secretName: 'BalpumApiDnsNameSecret',
-            secretObjectValue: {
-                apiDnsName: cdk.SecretValue.unsafePlainText(lb.loadBalancerDnsName),
-            }
+        // loadBalancer DNS
+        new cdk.CfnOutput(this, 'BalpumApiLoadBalancerDNS', {
+            value: lb.loadBalancerDnsName,
         });
     }
 }

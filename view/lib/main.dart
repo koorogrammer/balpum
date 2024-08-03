@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchData() async {
-    const url = 'http://Balpum-Balpu-Yz7IWDMTdfzQ-606528662.ap-northeast-2.elb.amazonaws.com';
+    const url = 'http://Balpum-Balpu-oNujUkudSiA2-130045110.ap-northeast-2.elb.amazonaws.com';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
